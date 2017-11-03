@@ -28,7 +28,6 @@ if (!access_token) {
 		success: function(response) {
 			localStorage['user'] = JSON.stringify(response);
 			user = JSON.parse(localStorage['user']);
-			console.log(user.display_name);
 		}
 	});
 }

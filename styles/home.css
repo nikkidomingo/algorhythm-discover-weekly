@@ -85,7 +85,7 @@ a{
 	.input-container,
 	.playlist-container {
 		border: 30px solid ;
-		border-image-source: url(/img/cover.jpg);
+		border-image-source: url(/algorhythm-discover-weekly/img/cover.jpg);
 		border-image-slice: 100;
 	}
 

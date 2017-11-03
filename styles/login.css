@@ -20,7 +20,7 @@ body, html {
 .title {
 	height: 100%;
 	width: 100%;
-	background: url(/img/cover.jpg);
+	background: url(/algorhythm-discover-weekly/img/cover.jpg);
 	background-size: cover;
 
 	display:flex;
