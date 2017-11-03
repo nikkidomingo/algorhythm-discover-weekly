@@ -10,7 +10,7 @@ function generateRandomString(length){
 }
 
 document.getElementById('btn-login').addEventListener('click', function() {
-	var client_id = '81e5851e3ad2464a941fdd04636a647a';
+	var client_id = '9aee9401ca4c44d3aa2144b87ac4cbd2';
 	// var redirect_uri = 'http://localhost:3000/home.html';
 	var redirect_uri = 'https://nikkidomingo.github.io/algorhythm-discover-weekly/home.html';
 	var state = generateRandomString(16);
