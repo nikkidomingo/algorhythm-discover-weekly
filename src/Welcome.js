@@ -20,8 +20,8 @@ class Welcome extends Component {
 
   handleSignIn(e) {
     var client_id = '9aee9401ca4c44d3aa2144b87ac4cbd2';
-    var redirect_uri = 'http://localhost:3000/home';
-    // var redirect_uri = 'https://nikkidomingo.github.io/algorhythm-discover-weekly/home.html';
+    // var redirect_uri = 'http://localhost:3000/home';
+    var redirect_uri = 'https://nikkidomingo.github.io/algorhythm-discover-weekly/home';
     var state = this.generateRandomString(16);
     var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
 
@@ -31,7 +31,6 @@ class Welcome extends Component {
     url += '&scope=' + scope;
     url += '&redirect_uri=' + redirect_uri;
     url += '&state' + state;
-
     window.location = url;
   }
 

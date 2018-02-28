@@ -23,7 +23,8 @@ body, html {
 }
 
 .welcome,
-.home {
+.home,
+.success {
   width: 100%;
   height: 100vh;
 
@@ -33,7 +34,8 @@ body, html {
   font-family: Open Sans, sans-serif;
 }
 
-.welcome {
+.welcome,
+.success {
   display:flex;
   flex-direction: column;
   justify-content: center;
@@ -72,6 +74,11 @@ h1 {
   padding: 15px 30px;
   border: none;
   border-radius: 5px;
+}
+
+.btn:disabled {
+  background-color: #6b6b6b;
+  color: #868991;
 }
 
 .home .container {
@@ -161,6 +168,10 @@ h1 {
   color: var(--brown);
 }
 
+.success .container {
+  text-align: center;
+}
+
 @media screen and (min-width: 426px){
   .welcome .container {
     height: 80%;
@@ -202,6 +213,21 @@ h1 {
   .track h2 {
     display: inline-block;
     margin-right: 10px;
+  }
+
+  .success .container {
+    text-align: center;
+    padding: 30px;
+    border: 30px solid ;
+    border-image-source: url(img/cover.jpg);
+    border-image-slice: 100;
+  }
+
+  .success .btn {
+    display: block;
+    margin: auto;
+    margin-top: 15px;
+    border: 2px solid #242927;
   }
 
 }

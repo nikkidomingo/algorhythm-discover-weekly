@@ -9,11 +9,13 @@ class Home extends Component {
 		this.getHashParams = this.getHashParams.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleAddTrack = this.handleAddTrack.bind(this);
+		this.handleAddToPlaylist = this.handleAddToPlaylist.bind(this);
 		this.removeTrack = this.removeTrack.bind(this);
 		this.state = {
 			input_value: '',
 			user: '',
-			tracks:[],
+			tracks: [],
+			track_uris: [],
 			hasError: false,
 			errorMessage: '',
 		}
@@ -29,34 +31,17 @@ class Home extends Component {
 		return hashParams;
 	}
 
-	// componentWillMount(){
-	// 	// Load data on page load
-	// 	var params = this.getHashParams();
+	componentWillMount(){
+		// Load data on page load
+		var params = this.getHashParams();
 
-	// 	var access_token = params.access_token,
-	// 		state = params.state;
+		var access_token = params.access_token;
 
-	// 	if (!access_token) {
-	// 		alert('There was an error during the authentication');
-	// 		// window.location = "localhost:3000";
-	// 		// window.location = "https://nikkidomingo.github.io/algorhythm-discover-weekly/";
-	// 	} else {
-	// 		fetch("https://api.spotify.com/v1/me", {
-	// 			headers: {
-	// 				'Authorization': 'Bearer ' + access_token
-	// 			}
-	// 		})
-	// 		.then(res => res.json())
-	// 		.then(
-	// 			(result) => {
-	// 				this.setState = {user: result.user};
-	// 			},
-	// 			(error) => {
-	// 				console.log(error);
-	// 			}
-	// 		)
-	// 	}
-	// }
+		if (!access_token) {
+			alert('There was an error during the authentication');
+			 window.location = 'https://nikkidomingo.github.io/algorhythm-discover-weekly/';
+		}
+	}
 
 	handleChange(e){
 		var input = e.target.value;
@@ -64,8 +49,15 @@ class Home extends Component {
 	}
 
 	removeTrack (trackIndex) {
-	    let new_tracks = this.state.tracks.splice(trackIndex, 1);
-	    this.setState({tracks: new_tracks});
+	    this.state.tracks.splice(trackIndex, 1);
+	    this.state.track_uris.splice(trackIndex, 1);
+
+	    this.setState({
+	    	tracks: this.state.tracks,
+	    	track_uris: this.state.track_uris
+	    });
+	    console.log(this.state.tracks);
+	    console.log(this.state.track_uris)
 	  }
 
 	handleAddTrack(e){
@@ -73,8 +65,7 @@ class Home extends Component {
 
 		var params = this.getHashParams();
 
-		var access_token = params.access_token,
-			state = params.state;
+		var access_token = params.access_token;
 
 		let input = this.state.input_value;
 		let get_track_url = 'https://api.spotify.com/v1/search?q='+ input +'&type=track';
@@ -87,7 +78,7 @@ class Home extends Component {
 		.then(res => res.json())
 		.then(
 			(result) => {
-				if(result.tracks.items.length == 0){
+				if(result.tracks.items.length === 0){
 					this.setState({
 						hasError: true,
 						errorMessage: "Oh no! There are no results from the song you entered."
@@ -100,12 +91,11 @@ class Home extends Component {
 
 					this.setState({
 						tracks: [...this.state.tracks, {
-							index: this.state.tracks.length,
 							name: track_name,
 							artist: track_artist,
 							album: track_album,
-							uri: track_uri
 						}],
+						track_uris: [...this.state.track_uris, track_uri],
 						input_value: '',
 						hasError: false,
 						errorMessage: '',
@@ -113,6 +103,33 @@ class Home extends Component {
 
 					console.log(this.state);
 				}
+			},
+			(error) => {
+				console.log('error adding track');
+			}
+		)
+	}
+
+	handleAddToPlaylist(e){
+		let track_uris = this.state.track_uris;
+		let playlist_url = 'https://api.spotify.com/v1/users/nikkiii.domingo/playlists/2q3pa3tz0Mz7XcjyYReOqx/tracks'
+		var params = this.getHashParams();
+		var access_token = params.access_token;
+
+		fetch(playlist_url, {
+			method: 'POST',
+			headers: {
+				'Authorization': 'Bearer ' + access_token
+			},
+			body: JSON.stringify({
+				uris: track_uris
+			})
+		})
+		.then(res => res.json())
+		.then(
+			(result) => {
+				console.log('yay success');
+				window.location = 'https://nikkidomingo.github.io/algorhythm-discover-weekly/success#access_token=' + access_token;
 			},
 			(error) => {
 				console.log('error adding track');
@@ -151,7 +168,11 @@ class Home extends Component {
 							removeTrack={this.removeTrack} />
 					</div>
 					<div className="btn-playlist-add">
-						<button className="btn">Add to Playlist</button>
+						<button className="btn" 
+							disabled={this.state.tracks.length < 1} 
+							onClick={this.handleAddToPlaylist}> 
+								Add to Playlist
+						</button>
 					</div>
 				</div>
 			</div>
