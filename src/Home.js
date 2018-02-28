@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
-import Track from './Track'
+// import Track from './Track'
 import TrackList from './TrackList'
+import ErrorMessage from './ErrorMessage'
 
 class Home extends Component {
 	constructor(props){
 		super(props);
 		this.getHashParams = this.getHashParams.bind(this);
-
+		this.handleChange = this.handleChange.bind(this);
+		this.handleAddTrack = this.handleAddTrack.bind(this);
+		this.removeTrack = this.removeTrack.bind(this);
 		this.state = {
-			user: null,
-			tracks:[]
+			input_value: '',
+			user: '',
+			tracks:[],
+			hasError: false,
+			errorMessage: '',
 		}
 	}
 
@@ -23,29 +29,95 @@ class Home extends Component {
 		return hashParams;
 	}
 
-	componentWillMount(){
-		// Load data on page load
+	// componentWillMount(){
+	// 	// Load data on page load
+	// 	var params = this.getHashParams();
+
+	// 	var access_token = params.access_token,
+	// 		state = params.state;
+
+	// 	if (!access_token) {
+	// 		alert('There was an error during the authentication');
+	// 		// window.location = "localhost:3000";
+	// 		// window.location = "https://nikkidomingo.github.io/algorhythm-discover-weekly/";
+	// 	} else {
+	// 		fetch("https://api.spotify.com/v1/me", {
+	// 			headers: {
+	// 				'Authorization': 'Bearer ' + access_token
+	// 			}
+	// 		})
+	// 		.then(res => res.json())
+	// 		.then(
+	// 			(result) => {
+	// 				this.setState = {user: result.user};
+	// 			},
+	// 			(error) => {
+	// 				console.log(error);
+	// 			}
+	// 		)
+	// 	}
+	// }
+
+	handleChange(e){
+		var input = e.target.value;
+		this.setState({input_value: input});
+	}
+
+	removeTrack (trackIndex) {
+	    let new_tracks = this.state.tracks.splice(trackIndex, 1);
+	    this.setState({tracks: new_tracks});
+	  }
+
+	handleAddTrack(e){
+		e.preventDefault();
+
 		var params = this.getHashParams();
 
 		var access_token = params.access_token,
 			state = params.state;
 
-		if (!access_token) {
-			alert('There was an error during the authentication');
-			// window.location = "localhost:3000";
-			// window.location = "https://nikkidomingo.github.io/algorhythm-discover-weekly/";
-		} else {
-			fetch("https://api.spotify.com/v1/me")
-				.then(res => res.json())
-				.then(
-					(result) => {
-						this.setState = {user: result.user};
-					},
-					(error) => {
-						console.log(error);
-        	}
-        )
-		}
+		let input = this.state.input_value;
+		let get_track_url = 'https://api.spotify.com/v1/search?q='+ input +'&type=track';
+
+		fetch(get_track_url, {
+			headers: {
+				'Authorization': 'Bearer ' + access_token
+			}
+		})
+		.then(res => res.json())
+		.then(
+			(result) => {
+				if(result.tracks.items.length == 0){
+					this.setState({
+						hasError: true,
+						errorMessage: "Oh no! There are no results from the song you entered."
+					})
+				} else {
+					var track_uri = result.tracks.items[0].uri;
+					var track_name = result.tracks.items[0].name;
+					var track_album = result.tracks.items[0].album.name;
+					var track_artist = result.tracks.items[0].artists[0].name;
+
+					this.setState({
+						tracks: [...this.state.tracks, {
+							index: this.state.tracks.length,
+							name: track_name,
+							artist: track_artist,
+							album: track_album,
+							uri: track_uri
+						}],
+						input_value: '',
+						hasError: false,
+						errorMessage: '',
+					});
+
+					console.log(this.state);
+				}
+			},
+			(error) => {
+				console.log('error adding track');
+			}
+		)
 	}
 
 	render() {
@@ -54,18 +126,29 @@ class Home extends Component {
 				<div className="container">
 					<h1>AlgoRhythm <br/> Discover <br/> Weekly </h1>
 					<div className="input">
-						<div className="error-message hidden">
-						</div>
+						<ErrorMessage hasError={this.state.hasError} errorMessage={this.state.errorMessage}/>
 						<p>Enter the name and artist of the song you want to add to the playlist. </p>
-						<form>
-							<center>
-								<input id="field-input" className="input-field" type="text" required autocomplete="off" placeholder="E.g. Happier Ed Sheeran" />
-								<input type="submit" value="&#10010;" id="btn-add" className="btn-add" />
-							</center>
-						</form>
+						<center>
+							<form onSubmit={this.handleAddTrack}>
+								<input id="field-input" 		
+										className="input-field"
+										onChange = {this.handleChange}
+										value = {this.state.input_value}
+										ref="input_value" 
+										type="text" 
+										required 
+										autoComplete="off" 
+										placeholder="E.g. Happier Ed Sheeran" />
+								<input id="btn-add"
+										className="btn-add" 
+										type="submit" 
+										value="&#10010;" />
+							</form>
+						</center>
 					</div>
 					<div className="tracklist">
-						<TrackList tracks={this.state.tracks} />
+						<TrackList tracks={this.state.tracks}
+							removeTrack={this.removeTrack} />
 					</div>
 					<div className="btn-playlist-add">
 						<button className="btn">Add to Playlist</button>

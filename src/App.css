@@ -14,6 +14,14 @@ body, html {
   background-color: var(--brown);
 }
 
+.error-message {
+  background:#4D4D4D;
+  color: #A69E9B;
+  padding: 10px;
+  border-radius: 2px;
+  margin: 0px 20px;
+}
+
 .welcome,
 .home {
   width: 100%;

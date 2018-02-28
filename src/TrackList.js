@@ -10,7 +10,14 @@ class TrackList extends Component {
 		return(
 			<div>
 			{this.props.tracks.map(track => (
-				<Track name={track.name} artist={track.artist} album={track.album} />
+				<Track 
+					key={track.index}
+					index={track.index}
+					uri={track.uri}
+					name={track.name} 
+					artist={track.artist} 
+					album={track.album} 
+					removeTrack={this.props.removeTrack}/>
 			))}
 			</div>
 		);
