@@ -11,9 +11,9 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-            <Route exact path="/" component={Welcome}/>
-            <Route path="/home" component={Home}/>
-            <Route path="/success" component={Success}/>
+            <Route exact path="/algorhythm-discover-weekly/" component={Welcome}/>
+            <Route path="/algorhythm-discover-weekly/home" component={Home}/>
+            <Route path="/algorhythm-discover-weekly/success" component={Success}/>
           </Switch>
       </Router>
     );
